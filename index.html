@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HD Poster Generator</title>
+
+<style>
+body {
+  font-family: sans-serif;
+  text-align: center;
+  background: linear-gradient(to right, #ff9933, #ffffff, #138808);
+}
+
+.container {
+  background: white;
+  padding: 15px;
+  border-radius: 15px;
+  max-width: 400px;
+  margin: auto;
+}
+
+input {
+  width: 90%;
+  padding: 8px;
+  margin: 5px;
+}
+
+button {
+  padding: 10px;
+  margin: 5px;
+  background: green;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h3>🎨 HD Poster Generator</h3>
+
+<input type="text" id="name" placeholder="नाव">
+<input type="text" id="post" placeholder="पदनाम">
+<input type="text" id="school" placeholder="शाळा">
+
+<input type="file" id="photo" accept="image/*">
+<input type="file" id="logo" accept="image/*">
+
+<br>
+<button onclick="generatePoster()">Poster तयार करा</button>
+<button onclick="download()">Download HD</button>
+<button onclick="share()">WhatsApp Share</button>
+
+</div>
+
+<canvas id="canvas" width="1080" height="1920" style="display:none;"></canvas>
+
+<script>
+let photoData, logoData;
+
+document.getElementById("photo").onchange = e=>{
+  let r = new FileReader();
+  r.onload = ()=> photoData = r.result;
+  r.readAsDataURL(e.target.files[0]);
+};
+
+document.getElementById("logo").onchange = e=>{
+  let r = new FileReader();
+  r.onload = ()=> logoData = r.result;
+  r.readAsDataURL(e.target.files[0]);
+};
+
+function generatePoster(){
+  let canvas = document.getElementById("canvas");
+  let ctx = canvas.getContext("2d");
+
+  // Background gradient
+  let g = ctx.createLinearGradient(0,0,0,1920);
+  g.addColorStop(0,"#ff9933");
+  g.addColorStop(0.5,"#ffffff");
+  g.addColorStop(1,"#138808");
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,1080,1920);
+
+  ctx.fillStyle="black";
+  ctx.textAlign="center";
+
+  // Logo
+  if(logoData){
+    let img = new Image();
+    img.onload = ()=> ctx.drawImage(img, 440, 50, 200, 200);
+    img.src = logoData;
+  }
+
+  ctx.font="bold 60px sans-serif";
+  ctx.fillText("शिक्षण विभाग",540,300);
+  ctx.fillText("नगरपालिका",540,380);
+
+  ctx.font="bold 50px sans-serif";
+  ctx.fillText("होय, मी नगरपालिका शाळेत शिकलोय!",540,500);
+
+  let name = document.getElementById("name").value;
+  let post = document.getElementById("post").value;
+  let school = document.getElementById("school").value;
+
+  ctx.font="45px sans-serif";
+  ctx.fillText("नाव: "+name,540,650);
+  ctx.fillText("पदनाम: "+post,540,720);
+  ctx.fillText("शाळा: "+school,540,790);
+
+  // Photo
+  if(photoData){
+    let img = new Image();
+    img.onload = ()=>{
+      ctx.drawImage(img, 340, 850, 400, 400);
+    }
+    img.src = photoData;
+  }
+
+  ctx.font="bold 55px sans-serif";
+  ctx.fillText("माझी शाळा माझे वैभव",540,1700);
+}
+
+function download(){
+  let link = document.createElement("a");
+  link.download = "HD_Poster.png";
+  link.href = document.getElementById("canvas").toDataURL("image/png");
+  link.click();
+}
+
+function share(){
+  let text = "माझी शाळा माझे वैभव 👉 " + window.location.href;
+  window.open("https://wa.me/?text=" + encodeURIComponent(text));
+}
+</script>
+
+</body>
+</html>
