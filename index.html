@@ -3,21 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HD Poster Generator</title>
+<title>Ultimate Poster</title>
 
 <style>
 body {
   font-family: sans-serif;
   text-align: center;
-  background: linear-gradient(to right, #ff9933, #ffffff, #138808);
+  background: linear-gradient(#f7d9a0, #f4b860);
 }
 
 .container {
-  background: white;
-  padding: 15px;
-  border-radius: 15px;
   max-width: 400px;
   margin: auto;
+  padding: 15px;
 }
 
 input {
@@ -41,14 +39,13 @@ button {
 
 <div class="container">
 
-<h3>🎨 HD Poster Generator</h3>
+<h3>🎨 Poster Generator</h3>
 
 <input type="text" id="name" placeholder="नाव">
 <input type="text" id="post" placeholder="पदनाम">
 <input type="text" id="school" placeholder="शाळा">
 
 <input type="file" id="photo" accept="image/*">
-<input type="file" id="logo" accept="image/*">
 
 <br>
 <button onclick="generatePoster()">Poster तयार करा</button>
@@ -60,7 +57,7 @@ button {
 <canvas id="canvas" width="1080" height="1920" style="display:none;"></canvas>
 
 <script>
-let photoData, logoData;
+let photoData;
 
 document.getElementById("photo").onchange = e=>{
   let r = new FileReader();
@@ -68,17 +65,11 @@ document.getElementById("photo").onchange = e=>{
   r.readAsDataURL(e.target.files[0]);
 };
 
-document.getElementById("logo").onchange = e=>{
-  let r = new FileReader();
-  r.onload = ()=> logoData = r.result;
-  r.readAsDataURL(e.target.files[0]);
-};
-
 function generatePoster(){
   let canvas = document.getElementById("canvas");
   let ctx = canvas.getContext("2d");
 
-  // Background gradient
+  // Background
   let g = ctx.createLinearGradient(0,0,0,1920);
   g.addColorStop(0,"#ff9933");
   g.addColorStop(0.5,"#ffffff");
@@ -90,13 +81,9 @@ function generatePoster(){
   ctx.textAlign="center";
 
   // Logo
-  // Logo (fixed)
-let logo = new Image();
-logo.src = "logo.jpg";
-
-logo.onload = function(){
-  ctx.drawImage(logo, 440, 50, 200, 200);
-};
+  let logo = new Image();
+  logo.src = "logo.jpg";
+  logo.onload = ()=> ctx.drawImage(logo, 440, 50, 200, 200);
 
   ctx.font="bold 60px sans-serif";
   ctx.fillText("शिक्षण विभाग",540,300);
@@ -129,14 +116,14 @@ logo.onload = function(){
 
 function download(){
   let link = document.createElement("a");
-  link.download = "HD_Poster.png";
-  link.href = document.getElementById("canvas").toDataURL("image/png");
+  link.download = "Poster.png";
+  link.href = document.getElementById("canvas").toDataURL();
   link.click();
 }
 
 function share(){
   let text = "माझी शाळा माझे वैभव 👉 " + window.location.href;
-  window.open("https://wa.me/?text=" + encodeURIComponent(text));
+  window.open("https://wa.me/?text="+encodeURIComponent(text));
 }
 </script>
 
