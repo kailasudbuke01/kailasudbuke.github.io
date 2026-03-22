@@ -90,11 +90,13 @@ function generatePoster(){
   ctx.textAlign="center";
 
   // Logo
-  if(logoData){
-    let img = new Image();
-    img.onload = ()=> ctx.drawImage(img, 440, 50, 200, 200);
-    img.src = logoData;
-  }
+  // Logo (fixed)
+let logo = new Image();
+logo.src = "logo.jpg";
+
+logo.onload = function(){
+  ctx.drawImage(logo, 440, 50, 200, 200);
+};
 
   ctx.font="bold 60px sans-serif";
   ctx.fillText("शिक्षण विभाग",540,300);
