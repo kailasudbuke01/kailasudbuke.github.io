@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultimate Poster</title>
+<title>Super Poster</title>
 
 <style>
 body {
   font-family: sans-serif;
   text-align: center;
-  background: linear-gradient(#f7d9a0, #f4b860);
+  background: #f2f2f2;
 }
 
 .container {
@@ -20,17 +20,25 @@ body {
 
 input {
   width: 90%;
-  padding: 8px;
-  margin: 5px;
+  padding: 10px;
+  margin: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
 }
 
 button {
   padding: 10px;
   margin: 5px;
-  background: green;
+  background: #ff6600;
   color: white;
   border: none;
   border-radius: 6px;
+}
+
+canvas {
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 10px;
 }
 </style>
 </head>
@@ -39,7 +47,7 @@ button {
 
 <div class="container">
 
-<h3>🎨 Poster Generator</h3>
+<h3>🎨 Super Poster Generator</h3>
 
 <input type="text" id="name" placeholder="नाव">
 <input type="text" id="post" placeholder="पदनाम">
@@ -48,20 +56,23 @@ button {
 <input type="file" id="photo" accept="image/*">
 
 <br>
-<button onclick="generatePoster()">Poster तयार करा</button>
+<button onclick="generatePoster()">Poster Preview</button>
 <button onclick="download()">Download HD</button>
 <button onclick="share()">WhatsApp Share</button>
 
-</div>
+<canvas id="canvas" width="1080" height="1920"></canvas>
 
-<canvas id="canvas" width="1080" height="1920" style="display:none;"></canvas>
+</div>
 
 <script>
 let photoData;
 
 document.getElementById("photo").onchange = e=>{
   let r = new FileReader();
-  r.onload = ()=> photoData = r.result;
+  r.onload = ()=> {
+    photoData = r.result;
+    generatePoster(); // auto preview
+  }
   r.readAsDataURL(e.target.files[0]);
 };
 
@@ -71,60 +82,87 @@ function generatePoster(){
 
   // Background
   let g = ctx.createLinearGradient(0,0,0,1920);
-  g.addColorStop(0,"#ff9933");
-  g.addColorStop(0.5,"#ffffff");
-  g.addColorStop(1,"#138808");
+  g.addColorStop(0,"#f7c27a");
+  g.addColorStop(1,"#f2a65a");
   ctx.fillStyle = g;
   ctx.fillRect(0,0,1080,1920);
 
-  ctx.fillStyle="black";
   ctx.textAlign="center";
 
   // Logo
   let logo = new Image();
   logo.src = "logo.jpg";
-  logo.onload = ()=> ctx.drawImage(logo, 440, 50, 200, 200);
+  logo.onload = ()=>{
+    ctx.drawImage(logo, 80, 80, 150, 150);
+  }
 
+  // Title
+  ctx.fillStyle="#a52a2a";
   ctx.font="bold 60px sans-serif";
-  ctx.fillText("शिक्षण विभाग",540,300);
-  ctx.fillText("नगरपालिका",540,380);
+  ctx.fillText("शिक्षण विभाग",540,200);
+  ctx.fillStyle="#1e3a8a";
+  ctx.fillText("नगरपालिका",540,280);
 
+  // Circle frame
+  ctx.beginPath();
+  ctx.arc(540, 650, 200, 0, Math.PI*2);
+  ctx.strokeStyle="#d97706";
+  ctx.lineWidth=8;
+  ctx.stroke();
+
+  // Photo inside circle
+  if(photoData){
+    let img = new Image();
+    img.onload = ()=>{
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(540,650,190,0,Math.PI*2);
+      ctx.closePath();
+      ctx.clip();
+      ctx.drawImage(img,340,450,400,400);
+      ctx.restore();
+    }
+    img.src = photoData;
+  }
+
+  // Quote
+  ctx.fillStyle="#8b0000";
   ctx.font="bold 50px sans-serif";
-  ctx.fillText("होय, मी नगरपालिका शाळेत शिकलोय!",540,500);
+  ctx.fillText("होय, मी नगरपालिका शाळेत शिकलोय!",540,1000);
 
   let name = document.getElementById("name").value;
   let post = document.getElementById("post").value;
   let school = document.getElementById("school").value;
 
+  ctx.fillStyle="#000";
   ctx.font="45px sans-serif";
-  ctx.fillText("नाव: "+name,540,650);
-  ctx.fillText("पदनाम: "+post,540,720);
-  ctx.fillText("शाळा: "+school,540,790);
+  ctx.fillText("नाव: "+name,540,1150);
+  ctx.fillText("पदनाम: "+post,540,1220);
+  ctx.fillText("शाळा: "+school,540,1290);
 
-  // Photo
-  if(photoData){
-    let img = new Image();
-    img.onload = ()=>{
-      ctx.drawImage(img, 340, 850, 400, 400);
-    }
-    img.src = photoData;
-  }
+  // Bottom banner
+  ctx.fillStyle="#ff6600";
+  ctx.fillRect(200,1600,680,120);
 
-  ctx.font="bold 55px sans-serif";
-  ctx.fillText("माझी शाळा माझे वैभव",540,1700);
+  ctx.fillStyle="white";
+  ctx.font="bold 50px sans-serif";
+  ctx.fillText("माझी शाळा माझे वैभव",540,1680);
 }
 
 function download(){
   let link = document.createElement("a");
-  link.download = "Poster.png";
+  link.download = "SuperPoster.png";
   link.href = document.getElementById("canvas").toDataURL();
   link.click();
 }
 
 function share(){
-  let text = "माझी शाळा माझे वैभव 👉 " + window.location.href;
+  let text = "मी नगरपालिका शाळेत शिकलोय! 👉 " + window.location.href;
   window.open("https://wa.me/?text="+encodeURIComponent(text));
 }
+
+// Auto load preview
+generatePoster();
 </script>
 
 </body>
